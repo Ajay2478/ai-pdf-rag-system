@@ -1,5 +1,18 @@
+"""
+Document Service
+Handles document lifecycle
+"""
+
 from sqlalchemy.orm import Session
+from celery.app.task import Task
+from typing import cast
+
 from app.models.document import Document
+from app.tasks.document_tasks import process_document_task
+
+
+# Proper typing for Celery task methods
+celery_process_document_task = cast(Task, process_document_task)
 
 
 def create_document(
@@ -9,17 +22,22 @@ def create_document(
     file_path: str,
 ):
     """
-    Create document record in DB
+    Create document record and trigger async processing.
     """
 
-    document = Document(
+    # Create document entry
+    doc = Document(
         user_id=user_id,
         filename=filename,
         file_path=file_path,
+        status="queued",
     )
 
-    db.add(document)
+    db.add(doc)
     db.commit()
-    db.refresh(document)
+    db.refresh(doc)
 
-    return document
+    # Trigger background processing task
+    celery_process_document_task.apply_async(args=[doc.id])
+
+    return doc

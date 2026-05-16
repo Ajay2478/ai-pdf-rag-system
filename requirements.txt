@@ -11,3 +11,8 @@ passlib[bcrypt]
 bcrypt==4.0.1
 python-multipart
 pypdf
+sentence-transformers
+pgvector
+groq
+celery==5.3.6
+redis==5.0.1

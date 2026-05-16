@@ -1,14 +1,22 @@
+"""
+Upload Service
+Handles file upload flow
+"""
+
 from sqlalchemy.orm import Session
+
 from app.storage.local_storage import save_file
 from app.services.document_service import create_document
 from app.services.processing_service import process_document
 
 def handle_file_upload(db: Session, user_id: int, file):
     """
-    Full upload flow:
+    Full upload flow
+
+    Steps:
     - Save file
     - Create DB record
-    Upload + Process
+    - Queue async processing
     """
 
     # Save file locally
@@ -21,10 +29,9 @@ def handle_file_upload(db: Session, user_id: int, file):
         filename=file.filename,
         file_path=file_path,
     )
-     # NEW: Process document immediately
     process_document(
-        db=db,
-        document_id=int(document.id),          # Fix typing
-        file_path=str(document.file_path),     # Fix typing
-   )
+    db=db,
+    document_id=int(document.id),          # Fix typing
+    file_path=str(document.file_path),     # Fix typing
+    )
     return document

@@ -14,3 +14,5 @@ SessionLocal = sessionmaker(
     autoflush=False,
     bind=engine
 )
+
+print("DB URL:", settings.DATABASE_URL)

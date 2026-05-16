@@ -23,14 +23,24 @@ class Settings(BaseSettings):
     DATABASE_URL: str
 
     # ==============================
+    # Security
+    # ==============================
+    SECRET_KEY: str
+
+    # ==============================
+    # AI / LLM
+    # ==============================
+    GROQ_API_KEY: str
+
+    # ==============================
     # Pydantic Settings Config (v2)
     # ==============================
     model_config = SettingsConfigDict(
-        env_file=".env",          # Load from .env
+        env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore"           # Ignore unknown env variables
+        extra="ignore"
     )
 
 
 # Global settings instance (singleton)
-settings = Settings()
+settings = Settings()  # type: ignore  # runtime loads from .env
